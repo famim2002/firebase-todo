@@ -3,6 +3,15 @@ import { getDatabase, ref, set } from "firebase/database";
 
 const Home = () => {
   const [todoData, setTodoData] = useState("");
+  const db = getDatabase();
+
+  const handleSubmit = () => {
+    console.log(todoData);
+    set(ref(db, "todo/"), {
+      todo_item: todoData,
+    });
+  };
+
   return (
     <>
       <section className=" py-24">
@@ -15,10 +24,13 @@ const Home = () => {
               <input
                 type="text"
                 className="text-[20px] border-[1px] p-2"
-                              placeholder="your text"
-                              onChange={()=>setTodoData(e.target.value)}
+                placeholder="your text"
+                onChange={(e) => setTodoData(e.target.value)}
               />
-              <button onClick={handleSubmit} className="text-[20px] border-2 bg-stone-200 px-3 cursor-pointer hover:bg-green-300">
+              <button
+                onClick={handleSubmit}
+                className="text-[20px] border-2 bg-stone-200 px-3 cursor-pointer hover:bg-green-300"
+              >
                 submit
               </button>
             </div>
