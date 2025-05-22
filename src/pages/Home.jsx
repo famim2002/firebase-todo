@@ -1,16 +1,29 @@
-import React, { useState } from "react";
-import { getDatabase, ref, set } from "firebase/database";
+import React, { useEffect, useState } from "react";
+import { getDatabase, push, ref, set, onValue } from "firebase/database";
 
 const Home = () => {
   const [todoData, setTodoData] = useState("");
+  const [todoList, setTodoList] = useState([]);
   const db = getDatabase();
 
   const handleSubmit = () => {
-    console.log(todoData);
-    set(ref(db, "todo/"), {
+   
+    set(push(ref(db, "todo/")), {
       todo_item: todoData,
     });
   };
+
+  useEffect(() => {
+    let arr = [];
+    onValue(ref(db, "todo/"), (snapshot) => {
+      snapshot.forEach((item) => {
+        arr.push(item.val());
+      });
+      setTodoList(arr);
+    });
+  }, []);
+
+ 
 
   return (
     <>
@@ -36,9 +49,12 @@ const Home = () => {
             </div>
             <div className="flex flex-col gap-5 items-center ">
               <ul className="">
-                <li className="text-[25px] underline list-disc">mern stack</li>
-                <li className="text-[25px] underline list-disc">full stack</li>
-                <li className="text-[25px] underline list-disc">node js</li>
+                {
+                  todoList.map((item) => (
+                  <li className="text-left  text-[25px] underline list-disc">
+                    {item.todo_item}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
